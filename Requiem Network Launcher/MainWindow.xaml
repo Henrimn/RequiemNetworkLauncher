@@ -1,0 +1,64 @@
+﻿<Window x:Class="Requiem_Network_Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Requiem_Network_Launcher"
+        mc:Ignorable="d"
+        Title="Requiem Network" Height="469" Width="750" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+    <Window.Background>
+        <ImageBrush ImageSource="http://requiemnetwork.com/background.jpg"/>
+    </Window.Background>
+    <Viewbox Stretch="Fill">
+        <Grid Height="871" Width="1434">
+            <Grid.Background>
+                <ImageBrush/>
+            </Grid.Background>
+            <Rectangle HorizontalAlignment="Left" Height="780" Margin="774,46,0,0" VerticalAlignment="Top" Width="600" Fill="#CC000000"/>
+
+            <TabControl Height="780" Margin="0,0,60,0" VerticalAlignment="Center" Width="600" Foreground="Black" BorderBrush="{x:Null}" Background="{x:Null}" FontFamily="Century Gothic" FontSize="20" HorizontalAlignment="Right" IsSynchronizedWithCurrentItem="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Padding="0" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Auto" UseLayoutRounding="False" SnapsToDevicePixels="True" AllowDrop="True">
+                <TabItem Header="GAME" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF747474" Width="298" Margin="0" ClipToBounds="True">
+                    <Grid>
+                        <TabControl Height="750" Margin="0,0,0,0" VerticalAlignment="Top" Width="600" Foreground="Black" BorderBrush="{x:Null}" Background="{x:Null}" FontFamily="Century Gothic" FontSize="20" HorizontalAlignment="Right" IsSynchronizedWithCurrentItem="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Padding="0" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Auto" UseLayoutRounding="False" SnapsToDevicePixels="True" AllowDrop="True" TabStripPlacement="Bottom">
+                            <TabItem Header="Game Login" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF747474" Width="298" Margin="0" ClipToBounds="True">
+                                <Grid>
+                                    <Label Content="Please enter your login information, if you don't&#xA;have an account, please click the register tab&#xA;at the bottom to create one, then come back &#xA;to log in." HorizontalAlignment="Left" Margin="67,46,0,0" VerticalAlignment="Top" Width="487" Height="110" Foreground="#7FFFFFFF"/>
+                                    <Label Content="Username:" HorizontalAlignment="Left" Margin="67,201,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#7FFFFFFF" FontSize="22"/>
+                                    <TextBox x:Name="UsernameBox" HorizontalAlignment="Left" Height="33" Margin="67,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="487" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SpellCheck.IsEnabled="False" BorderBrush="White" Background="#ffffff" KeyDown="UsernameBox_KeyDown" />
+                                    <Label Content="Password:" HorizontalAlignment="Left" Margin="67,294,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#7FFFFFFF" FontSize="22"/>
+                                    <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="33" Margin="67,331,0,0" PasswordChar="*" VerticalAlignment="Top" Width="487" FontSize="22" BorderBrush="White" Background="#ffffff" KeyDown="PasswordBox_KeyDown" />
+                                    <Button x:Name="StartGameButton" Content="Start Game" HorizontalAlignment="Center" Height="60" Margin="67,504,46,0" VerticalAlignment="Top" Width="487" Click="StartGameButton_Click" Background="White" BorderBrush="White"/>
+                                    <Button x:Name="UpdateGameButton" Content="Update" HorizontalAlignment="Center" Height="60" Margin="67,582,46,0" VerticalAlignment="Top" Width="487" Click="UpdateGameButton_Click" Background="White" BorderBrush="White"/>
+                                    <Label x:Name="LoginWarningBox" Content="" HorizontalAlignment="Left" Margin="67,380,0,0" VerticalAlignment="Top" Background="#00000000" FontSize="22"/>
+
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Register New Account" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF747474" Width="298" Margin="0" ClipToBounds="True">
+                                <Grid>
+                                    <Label Content="Please enter your registration details.&#xA;You may only use:&#xA;- alphabetical characters and numbers only&#xA;- no symbols (such as $, &amp;, and *, for example)&#xA;- @ symbol and . only usable in email" HorizontalAlignment="Left" Margin="67,46,0,0" VerticalAlignment="Top" Width="487" Height="138" Foreground="#7FFFFFFF"/>
+                                    <Label Content="Username:" HorizontalAlignment="Left" Margin="67,201,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#7FFFFFFF" FontSize="22"/>
+                                    <TextBox x:Name="UsernameRegisterBox" HorizontalAlignment="Left" Height="33" Margin="67,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="487" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SpellCheck.IsEnabled="False"/>
+                                    <Label Content="Email:" HorizontalAlignment="Left" Margin="67,294,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#7FFFFFFF" FontSize="22"/>
+                                    <TextBox x:Name="EmailRegisterBox" HorizontalAlignment="Left" Height="33" Margin="67,331,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="487" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SpellCheck.IsEnabled="False"/>
+                                    <Label Content="Password:" HorizontalAlignment="Left" Margin="67,387,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#7FFFFFFF" FontSize="22"/>
+                                    <TextBox x:Name="PasswordRegisterBox" HorizontalAlignment="Left" Height="33" Margin="67,424,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="487" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SpellCheck.IsEnabled="False"/>
+                                    <Button x:Name="RegisterButton" Content="Register" HorizontalAlignment="Center" Height="60" Margin="67,582,46,0" VerticalAlignment="Top" Width="487" Click="RegisterButton_Click"/>
+                                    <Label x:Name="RegisterWarningBox" Content="" HorizontalAlignment="Left" Margin="67,483,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#FF0000" FontSize="22"/>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="PATCHNOTES" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF747474" Width="298" Margin="0" ClipToBounds="True" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <Grid>
+                        <WebBrowser HorizontalAlignment="Center" Height="749" VerticalAlignment="Center" Width="600" Source="http://requiemnetwork.com/patchnotes.html" ClipToBounds="True" Opacity="0.5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+            <Label x:Name="VersionDisplayLabel" Content="" HorizontalAlignment="Left" Margin="0,851,0,-14" VerticalAlignment="Top" Height="34" Foreground="White" FontFamily="Century Gothic" Width="746" FontSize="11"/>
+            <ProgressBar x:Name="DownloadProgressBar" HorizontalAlignment="Left" Height="20" Margin="60,831,60,0" VerticalAlignment="Top" Width="1334"/>
+            <Label x:Name="ArtCreditText" Content="" HorizontalAlignment="Left" Margin="774,851,0,-14" VerticalAlignment="Top" Width="660" Height="34" FontSize="11" FontFamily="Century Gothic" HorizontalContentAlignment="Right"/>
+            <Label x:Name="DownloadDetails" Content="" HorizontalAlignment="Left" Margin="40,826,0,10" Width="1334" FontFamily="Century Gothic" FontSize="15" HorizontalContentAlignment="Center"/>
+        </Grid>
+    </Viewbox>
+</Window>
