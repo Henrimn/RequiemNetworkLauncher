@@ -45,8 +45,8 @@ namespace Requiem_Network_Launcher
             GetArtWorkCredit();
 
             // hide ui 
-            DownloadDetails.Visibility = Visibility.Hidden;
-            DownloadProgressBar.Visibility = Visibility.Hidden;
+            ProgressDetails.Visibility = Visibility.Hidden;
+            ProgressBar.Visibility = Visibility.Hidden;
 
         }
         
@@ -56,23 +56,23 @@ namespace Requiem_Network_Launcher
             rootDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
 
             // set path for winnsi.dll and Vindictus.exe, version.txt and LauncherUpdater.exe
-            _dllPath = System.IO.Path.Combine(rootDirectory, "winnsi.dll");
+            /*_dllPath = System.IO.Path.Combine(rootDirectory, "winnsi.dll");
             _processPath = System.IO.Path.Combine(rootDirectory, "Vindictus.exe");
             _launcherUpdaterPath = System.IO.Path.Combine(rootDirectory, "LauncherUpdater.exe");
-            _versionPath = System.IO.Path.Combine(rootDirectory, "Version.txt");
+            _versionPath = System.IO.Path.Combine(rootDirectory, "Version.txt");*/
 
-            /*_dllPath = @"C:\Requiem\ko-KR\winnsi.dll";
+            _dllPath = @"C:\Requiem\ko-KR\winnsi.dll";
             _processPath = @"C:\Requiem\ko-KR\Vindictus.exe";
             _launcherUpdaterPath = @"D:\test\LauncherUpdater.exe";
-            _versionPath = @"D:\test\version.txt";*/
+            _versionPath = @"D:\test\version.txt";
 
             if (!File.Exists(_dllPath))
             {
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    LoginWarningBox.Content = "You are missing winnsi.dll file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Text = "You are missing winnsi.dll file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
             else if (!File.Exists(_processPath))
@@ -80,8 +80,8 @@ namespace Requiem_Network_Launcher
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    LoginWarningBox.Content = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Text = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
             else if (!File.Exists(_launcherUpdaterPath))
@@ -89,8 +89,8 @@ namespace Requiem_Network_Launcher
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    LoginWarningBox.Content = "You are missing LauncherUpdater.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Text = "You are missing LauncherUpdater.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
             else if (!File.Exists(_versionPath))
@@ -98,8 +98,8 @@ namespace Requiem_Network_Launcher
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    LoginWarningBox.Content = "You are missing version.txt file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Text = "You are missing version.txt file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
             else
@@ -113,8 +113,8 @@ namespace Requiem_Network_Launcher
             // update small version info at bottom left corner
             Dispatcher.Invoke((Action)(() =>
             {
-                LoginWarningBox.Content = "Checking game version...";
-                LoginWarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                WarningBox.Text = "Checking game version...";
+                WarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
             }));
 
             var versionPath = _versionPath;
@@ -147,14 +147,11 @@ namespace Requiem_Network_Launcher
             // check if player has updated their game yet or not
             if (currentVersionLocal != currentVersionServer)
             {
-                // control behavior of close (X) button
-                _exitSign = "update";
-
                 // display warning
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    LoginWarningBox.Content = "Your game is not up to date yet.\nPlease update your game!";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Text = "Your game is not up to date yet.\nPlease update your game!";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
 
                     // enable update button only -> force player to update the game
                     UpdateGameButton.IsEnabled = true;
@@ -166,6 +163,7 @@ namespace Requiem_Network_Launcher
             }
             else
             {
+                // no update = normal close button
                 _exitSign = "noupdate";
 
                 // display notice
@@ -174,8 +172,8 @@ namespace Requiem_Network_Launcher
                     // set focus on username box once the launcher starts
                     UsernameBox.Focus();
 
-                    LoginWarningBox.Content = "Your game is up to date!";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                    WarningBox.Text = "Your game is up to date!";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
 
                     // re-enable start game button for player
                     StartGameButton.IsEnabled = true;
@@ -238,8 +236,9 @@ namespace Requiem_Network_Launcher
                 _nIcon.Visible = false;
                 Environment.Exit(0);
             }
+
             // launch LauncherUpdater.exe if client did need to update the game
-            if (_exitSign == "update")
+            else if (_exitSign == "update")
             {
                 Process launcherUpdater = new Process();
                 launcherUpdater.StartInfo.FileName = _launcherUpdaterPath;

@@ -50,8 +50,8 @@ namespace Requiem_Network_Launcher
                 // Update login status on UI thread (main thread)
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    LoginWarningBox.Content = "Login successfully!";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                    WarningBox.Text = "Login successfully!";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
                 }));
 
                 // split string to "token", ":", and token value
@@ -104,8 +104,8 @@ namespace Requiem_Network_Launcher
                 Dispatcher.Invoke((Action)(() =>
                 {
                     PasswordBox.Password = "";
-                    LoginWarningBox.Content = "Wrong username or password.\nPlease try again!";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Text = "Wrong username or password.\nPlease try again!";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
 
@@ -115,8 +115,8 @@ namespace Requiem_Network_Launcher
                 // Update login status on UI thread(main thread)
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    LoginWarningBox.Content = "Login failed!\nError code: " + responseCode + "\nPlease contact staff for more help.";
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Text = "Login failed!\nError code: " + responseCode + "\nPlease contact staff for more help.";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
         }
@@ -126,7 +126,7 @@ namespace Requiem_Network_Launcher
             Dispatcher.Invoke((Action)(() =>
             {
                 // clear login status
-                LoginWarningBox.Content = "";
+                WarningBox.Text = "";
 
                 // re-enable start game button after the game is closed
                 StartGameButton.Content = "Start Game";

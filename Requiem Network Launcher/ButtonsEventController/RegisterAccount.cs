@@ -43,7 +43,7 @@ namespace Requiem_Network_Launcher
                 Dispatcher.Invoke((Action)(() =>
                 {
                     RegisterWarningBox.Content = "Error: " + response.StatusCode.ToString();
-                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
         }

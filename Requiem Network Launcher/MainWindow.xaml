@@ -30,7 +30,7 @@
                                     <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="33" Margin="67,331,0,0" PasswordChar="*" VerticalAlignment="Top" Width="487" FontSize="22" BorderBrush="White" Background="#ffffff" KeyDown="PasswordBox_KeyDown" />
                                     <Button x:Name="StartGameButton" Content="Start Game" HorizontalAlignment="Center" Height="60" Margin="67,504,46,0" VerticalAlignment="Top" Width="487" Click="StartGameButton_Click" Background="White" BorderBrush="White"/>
                                     <Button x:Name="UpdateGameButton" Content="Update" HorizontalAlignment="Center" Height="60" Margin="67,582,46,0" VerticalAlignment="Top" Width="487" Click="UpdateGameButton_Click" Background="White" BorderBrush="White"/>
-                                    <Label x:Name="LoginWarningBox" Content="" HorizontalAlignment="Left" Margin="67,380,0,0" VerticalAlignment="Top" Background="#00000000" FontSize="22"/>
+                                    <TextBlock x:Name="WarningBox" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="67,380,0,0" VerticalAlignment="Top" Background="#00000000" FontSize="22" Width="487" Height="106"/>
 
                                 </Grid>
                             </TabItem>
@@ -52,16 +52,14 @@
                 </TabItem>
                 <TabItem Header="PATCHNOTES" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF747474" Width="298" Margin="0" ClipToBounds="True" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                     <Grid>
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                            <TextBlock HorizontalAlignment="Center" Background="Transparent" Height="749" VerticalAlignment="Center" Width="600" TextWrapping="Wrap" Text="TextBlock"/>
-                        </ScrollViewer>
+                        <WebBrowser HorizontalAlignment="Center" Height="749" VerticalAlignment="Center" Width="600" Source="http://requiemnetwork.com/patchnotes.html" ClipToBounds="True" Opacity="0.5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                     </Grid>
                 </TabItem>
             </TabControl>
             <Label x:Name="VersionDisplayLabel" Content="" HorizontalAlignment="Left" Margin="0,851,0,-14" VerticalAlignment="Top" Height="34" Foreground="White" FontFamily="Century Gothic" Width="746" FontSize="11"/>
-            <ProgressBar x:Name="DownloadProgressBar" HorizontalAlignment="Left" Height="20" Margin="60,831,60,0" VerticalAlignment="Top" Width="1334"/>
+            <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Left" Height="20" Margin="60,831,60,0" VerticalAlignment="Top" Width="1334"/>
             <Label x:Name="ArtCreditText" Content="" HorizontalAlignment="Left" Margin="774,851,0,-14" VerticalAlignment="Top" Width="660" Height="34" FontSize="11" FontFamily="Century Gothic" HorizontalContentAlignment="Right"/>
-            <Label x:Name="DownloadDetails" Content="" HorizontalAlignment="Left" Margin="40,826,0,10" Width="1334" FontFamily="Century Gothic" FontSize="15" HorizontalContentAlignment="Center"/>
+            <Label x:Name="ProgressDetails" Content="" HorizontalAlignment="Left" Margin="40,826,0,10" Width="1334" FontFamily="Century Gothic" FontSize="15" HorizontalContentAlignment="Center"/>
         </Grid>
     </Viewbox>
 </Window>

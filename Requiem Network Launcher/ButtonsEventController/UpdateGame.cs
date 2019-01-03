@@ -26,8 +26,8 @@ namespace Requiem_Network_Launcher
             // update ui for downloading
             Dispatcher.Invoke((Action)(() =>
             {
-                LoginWarningBox.Content = "Gathering information...";
-                LoginWarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                WarningBox.Text = "Gathering information...";
+                WarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
 
                 // disable update button while updating
                 UpdateGameButton.IsEnabled = false;
@@ -61,11 +61,11 @@ namespace Requiem_Network_Launcher
                 GetDownloadFileSize(updateDowndloadNew[5]);
             }
 
-            //_updatePath = @"D:\test\UpdateTemp.zip";
+            
 
             // create temporary zip file from download
-            _updatePath = System.IO.Path.Combine(rootDirectory, "UpdateTemporary.zip");
-
+            //_updatePath = System.IO.Path.Combine(rootDirectory, "UpdateTemporary.zip");
+            _updatePath = @"D:\test\UpdateTemp.zip";
 
             // download update (zip) 
             using (CookieAwareWebClient webClient = new CookieAwareWebClient())
@@ -93,8 +93,8 @@ namespace Requiem_Network_Launcher
                         else // in case it is not a direct google drive download link
                         {
                             // construct new download link with confirm code
-                            //string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + "15wrcgMB8AyRk30x5p7DoXvdZSrCrkL70";
-                            string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + updateDowndloadNew[3];
+                            string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + "15wrcgMB8AyRk30x5p7DoXvdZSrCrkL70";
+                            //string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + updateDowndloadNew[3];
                             var uri = new Uri(updateDownloadLinkNew);
                             webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
                             webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
@@ -126,7 +126,7 @@ namespace Requiem_Network_Launcher
                 Dispatcher.Invoke((Action)(() =>
                 {
                     // display updating status notice
-                    LoginWarningBox.Content = "Extracting files...";
+                    WarningBox.Text = "Extracting files...";
                 }));
                 
                 // perform unzip in a new thread to prevent UI from freezing
@@ -136,22 +136,59 @@ namespace Requiem_Network_Launcher
                     using (ZipFile zip = ZipFile.Read(_updatePath))
                     {
                         zip.ExtractProgress += Zip_ExtractProgress;
-                        //zip.ExtractAll(@"D:\test\", ExtractExistingFileAction.OverwriteSilently);
-                        zip.ExtractAll(rootDirectory, ExtractExistingFileAction.OverwriteSilently);
+                        zip.ExtractAll(@"D:\test\", ExtractExistingFileAction.OverwriteSilently);
+                        //zip.ExtractAll(rootDirectory, ExtractExistingFileAction.OverwriteSilently);
                     }
 
                     // delete the temporary zip file after finish extracting
                     File.Delete(_updatePath);
 
-                    Dispatcher.Invoke((Action)(() =>
-                    {
-                        // hide progress bar and detail
-                        DownloadProgressBar.Visibility = Visibility.Hidden;
-                        DownloadDetails.Visibility = Visibility.Hidden;
+                    //var _launcherNewPath = System.IO.Path.Combine(rootDirectory, "Requiem Network Launcher New.exe");
+                    var _launcherNewPath = @"D:\test\Requiem Network Launcher New.exe";
 
-                        // display updating status notice
-                        LoginWarningBox.Content = "Updating finished!\nPlease restart the launcher to play.";
-                    }));
+                    if (!File.Exists(_launcherNewPath))
+                    {
+                        // read info from version.txt file in main game folder
+                        var versionTextLocal = System.IO.File.ReadAllText(_versionPath);
+                        var versionTextLocalSplit = versionTextLocal.Split(',');
+                        var currentVersionLocal = versionTextLocalSplit[0].Split('"')[3];
+                        var currentVersionDate = versionTextLocalSplit[1].Split('"')[3];
+                        
+                        Dispatcher.Invoke((Action)(() =>
+                        {
+                            // update version display
+                            VersionDisplayLabel.Content = "Version: " + currentVersionLocal + " - Release Date: " + currentVersionDate;
+
+                            // hide progress bar and detail
+                            ProgressBar.Visibility = Visibility.Hidden;
+                            ProgressDetails.Visibility = Visibility.Hidden;
+
+                            // display updating status notice
+                            WarningBox.Text = "Updating finished!\nYou can play the game now.";
+                            StartGameButton.IsEnabled = true;
+                            StartGameButton.Foreground = new SolidColorBrush(Colors.Black);
+                        }));
+                    }
+                    else
+                    {
+                        // set sign that there is a newer version of launcher
+                        _exitSign = "update";
+
+                        Dispatcher.Invoke((Action)(() =>
+                        {
+                            // hide progress bar and detail
+                            ProgressBar.Visibility = Visibility.Hidden;
+                            ProgressDetails.Visibility = Visibility.Hidden;
+
+                            // display updating status notice
+                            WarningBox.FontSize = 20;
+                            WarningBox.Text = "Update contains a newer version of the launcher!\nPlease restart the launcher to complete updating!";
+                        }));
+
+                        
+                    }
+
+                    
                 }).Start();
             }
 
@@ -164,8 +201,8 @@ namespace Requiem_Network_Launcher
                 Dispatcher.Invoke((Action)(() =>
                 {
                     // display updating status notice
-                    DownloadProgressBar.Value = Convert.ToInt32(100 * e.BytesTransferred / e.TotalBytesToTransfer);
-                    DownloadDetails.Content = "Extracting: " + e.CurrentEntry.FileName;
+                    ProgressBar.Value = Convert.ToInt32(100 * e.BytesTransferred / e.TotalBytesToTransfer);
+                    ProgressDetails.Content = "Extracting: " + e.CurrentEntry.FileName;
                 }));
             }
             
@@ -179,12 +216,12 @@ namespace Requiem_Network_Launcher
                 Dispatcher.Invoke((Action)(() =>
                 {
                     // display updating status notice
-                    DownloadDetails.Visibility = Visibility.Visible;
-                    DownloadProgressBar.Visibility = Visibility.Visible;
+                    ProgressDetails.Visibility = Visibility.Visible;
+                    ProgressBar.Visibility = Visibility.Visible;
 
-                    LoginWarningBox.Content = "Dowloading update... " + total.ToString("F2") + "%";
-                    DownloadProgressBar.Value = total;
-                    DownloadDetails.Content = FileSizeType(e.BytesReceived) + " / " + FileSizeType(_updateFileSize);
+                    WarningBox.Text = "Dowloading update... " + total.ToString("F2") + "%";
+                    ProgressBar.Value = total;
+                    ProgressDetails.Content = FileSizeType(e.BytesReceived) + " / " + FileSizeType(_updateFileSize);
                 }));
             }
         }
