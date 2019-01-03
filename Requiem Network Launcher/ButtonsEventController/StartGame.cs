@@ -13,7 +13,7 @@ namespace Requiem_Network_Launcher
     public partial class MainWindow
     {
         private Injector _injector = new Injector();
-        private Process _process;
+        private Process _vindictus;
 
         private void StartGameButton_Click(object sender, RoutedEventArgs e)
         {
@@ -59,14 +59,14 @@ namespace Requiem_Network_Launcher
                 responseToken = responseToken.Replace(@"\", ""); // "\/" is not valid. Correct format should be "/" only, "\" acts as an escape character
 
                 // start Vindictus.exe 
-                _process = new Process();
+                _vindictus = new Process();
                 try
                 {
-                    _process.EnableRaisingEvents = true;
-                    _process.Exited += _process_Exited;
-                    _process.StartInfo.FileName = _processPath;
-                    _process.StartInfo.Arguments = " -lang zh-TW -token " + responseToken; // if token is null -> server under maintenance error
-                    _process.Start();
+                    _vindictus.EnableRaisingEvents = true;
+                    _vindictus.Exited += _process_Exited;
+                    _vindictus.StartInfo.FileName = _processPath;
+                    _vindictus.StartInfo.Arguments = " -lang zh-TW -token " + responseToken; // if token is null -> server under maintenance error
+                    _vindictus.Start();
                 }
                 catch (Exception)
                 {
@@ -74,7 +74,7 @@ namespace Requiem_Network_Launcher
                 }
 
                 // inject winnsi.dll to Vindictus.exe 
-                _injector.CreateRemoteThread(_dllPath, _process.Id);
+                _injector.CreateRemoteThread(_dllPath, _vindictus.Id);
 
                 Dispatcher.Invoke((Action)(() =>
                 {

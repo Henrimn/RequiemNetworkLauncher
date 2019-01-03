@@ -28,8 +28,10 @@ namespace Requiem_Network_Launcher
         private string _processPath;
         private string _versionPath;
         private string _updatePath;
+        private string _launcherUpdaterPath;
         private string _currentVersionLocal;
         private NotifyIcon _nIcon;
+        private string _exitSign;
 
         public MainWindow()
         {
@@ -53,15 +55,17 @@ namespace Requiem_Network_Launcher
             // get current directory of the Launcher
             rootDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
 
-            // set path for winnsi.dll and Vindictus.exe and version.txt
+            // set path for winnsi.dll and Vindictus.exe, version.txt and LauncherUpdater.exe
             _dllPath = System.IO.Path.Combine(rootDirectory, "winnsi.dll");
             _processPath = System.IO.Path.Combine(rootDirectory, "Vindictus.exe");
+            _launcherUpdaterPath = System.IO.Path.Combine(rootDirectory, "LauncherUpdater.exe");
             _versionPath = System.IO.Path.Combine(rootDirectory, "Version.txt");
-            
+
             /*_dllPath = @"C:\Requiem\ko-KR\winnsi.dll";
             _processPath = @"C:\Requiem\ko-KR\Vindictus.exe";
+            _launcherUpdaterPath = @"D:\test\LauncherUpdater.exe";
             _versionPath = @"D:\test\version.txt";*/
-            
+
             if (!File.Exists(_dllPath))
             {
                 // update small version info at bottom left corner
@@ -77,6 +81,15 @@ namespace Requiem_Network_Launcher
                 Dispatcher.Invoke((Action)(() =>
                 {
                     LoginWarningBox.Content = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
+                    LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                }));
+            }
+            else if (!File.Exists(_launcherUpdaterPath))
+            {
+                // update small version info at bottom left corner
+                Dispatcher.Invoke((Action)(() =>
+                {
+                    LoginWarningBox.Content = "You are missing LauncherUpdater.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
                     LoginWarningBox.Foreground = new SolidColorBrush(Colors.Red);
                 }));
             }
@@ -134,6 +147,9 @@ namespace Requiem_Network_Launcher
             // check if player has updated their game yet or not
             if (currentVersionLocal != currentVersionServer)
             {
+                // control behavior of close (X) button
+                _exitSign = "update";
+
                 // display warning
                 Dispatcher.Invoke((Action)(() =>
                 {
@@ -150,6 +166,8 @@ namespace Requiem_Network_Launcher
             }
             else
             {
+                _exitSign = "noupdate";
+
                 // display notice
                 Dispatcher.Invoke((Action)(() =>
                 {
@@ -214,8 +232,20 @@ namespace Requiem_Network_Launcher
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _nIcon.Visible = false;
-            Environment.Exit(0);
+            // normal exit if client did not need to update the game
+            if (_exitSign == "noupdate")
+            {
+                _nIcon.Visible = false;
+                Environment.Exit(0);
+            }
+            // launch LauncherUpdater.exe if client did need to update the game
+            if (_exitSign == "update")
+            {
+                Process launcherUpdater = new Process();
+                launcherUpdater.StartInfo.FileName = _launcherUpdaterPath;
+                launcherUpdater.Start();
+                Environment.Exit(0);
+            }
             base.OnClosing(e);
         }
 

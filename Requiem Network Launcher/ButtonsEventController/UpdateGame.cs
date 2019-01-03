@@ -93,6 +93,7 @@ namespace Requiem_Network_Launcher
                         else // in case it is not a direct google drive download link
                         {
                             // construct new download link with confirm code
+                            //string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + "15wrcgMB8AyRk30x5p7DoXvdZSrCrkL70";
                             string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + updateDowndloadNew[3];
                             var uri = new Uri(updateDownloadLinkNew);
                             webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
@@ -150,26 +151,6 @@ namespace Requiem_Network_Launcher
 
                         // display updating status notice
                         LoginWarningBox.Content = "Updating finished!\nPlease restart the launcher to play.";
-                    }));
-
-                    // read info from version.txt file in main game folder
-                    var versionTextLocal = System.IO.File.ReadAllText(_versionPath);
-                    var versionTextLocalSplit = versionTextLocal.Split(',');
-                    var currentVersionLocal = versionTextLocalSplit[0].Split('"')[3];
-                    var currentVersionDate = versionTextLocalSplit[1].Split('"')[3];
-
-                    // update new version info at the bottom corner of the launcher
-                    Dispatcher.Invoke((Action)(() =>
-                    {
-                        VersionDisplayLabel.Content = "Version: " + currentVersionLocal + " - Release Date: " + currentVersionDate;
-                        /*
-                        // disable start game button for player
-                        StartGameButton.IsEnabled = true;
-                        StartGameButton.Foreground = new SolidColorBrush(Colors.Black);*/
-
-                        // disable update game button after finishing updating
-                        UpdateGameButton.IsEnabled = false;
-                        UpdateGameButton.Foreground = new SolidColorBrush(Colors.Silver);
                     }));
                 }).Start();
             }
