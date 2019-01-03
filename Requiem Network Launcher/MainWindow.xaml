@@ -52,7 +52,9 @@
                 </TabItem>
                 <TabItem Header="PATCHNOTES" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF747474" Width="298" Margin="0" ClipToBounds="True" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                     <Grid>
-                        <WebBrowser HorizontalAlignment="Center" Height="749" VerticalAlignment="Center" Width="600" Source="http://requiemnetwork.com/patchnotes.html" ClipToBounds="True" Opacity="0.5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                            <TextBlock HorizontalAlignment="Center" Background="Transparent" Height="749" VerticalAlignment="Center" Width="600" TextWrapping="Wrap" Text="TextBlock"/>
+                        </ScrollViewer>
                     </Grid>
                 </TabItem>
             </TabControl>

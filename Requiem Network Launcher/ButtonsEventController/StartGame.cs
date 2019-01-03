@@ -70,6 +70,7 @@ namespace Requiem_Network_Launcher
                 }
                 catch (Exception)
                 {
+
                 }
 
                 // inject winnsi.dll to Vindictus.exe 

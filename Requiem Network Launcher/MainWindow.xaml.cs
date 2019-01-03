@@ -197,7 +197,7 @@ namespace Requiem_Network_Launcher
         private void MenuExit_Click(object sender, EventArgs e)
         {
             _nIcon.Visible = false;
-            System.Windows.Forms.Application.Exit();
+            this.Close();
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -215,7 +215,7 @@ namespace Requiem_Network_Launcher
         protected override void OnClosing(CancelEventArgs e)
         {
             _nIcon.Visible = false;
-            System.Windows.Forms.Application.Exit();
+            Environment.Exit(0);
             base.OnClosing(e);
         }
 
