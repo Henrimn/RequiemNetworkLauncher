@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Requiem_Network_Launcher"
         mc:Ignorable="d"
-        Title="Requiem Network" Height="900" Width="1440" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="Requiem Network" MinHeight="469" MinWidth="750" MaxHeight="900" MaxWidth="1440" Height="900" Width="1440" WindowStartupLocation="CenterScreen">
     <Window.Background>
-        <ImageBrush ImageSource="http://requiemnetwork.com/background.jpg"/>
+        <ImageBrush ImageSource="http://requiemnetwork.com/background.jpg" Stretch="UniformToFill"/>
+
     </Window.Background>
     <Viewbox Stretch="Fill">
         <Grid Height="871" Width="1434">

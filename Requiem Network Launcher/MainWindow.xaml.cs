@@ -34,6 +34,7 @@ namespace Requiem_Network_Launcher
         public MainWindow()
         {
             InitializeComponent();
+            this.SourceInitialized += Window_SourceInitialized;
 
             NotifyIconSetup();
 
@@ -217,6 +218,13 @@ namespace Requiem_Network_Launcher
             System.Windows.Forms.Application.Exit();
             base.OnClosing(e);
         }
-        
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+            }
+        }
     }
 }

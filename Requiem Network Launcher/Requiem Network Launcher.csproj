@@ -106,6 +106,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Utils\CookieAwareWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Utils\CustomResize.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -117,9 +121,6 @@
     <Compile Include="ButtonsEventController\RegisterAccount.cs" />
     <Compile Include="ButtonsEventController\StartGame.cs" />
     <Compile Include="ButtonsEventController\UpdateGame.cs" />
-    <Compile Include="CookieAwareWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
