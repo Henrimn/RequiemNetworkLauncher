@@ -106,6 +106,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ButtonsEventController\UpdateLauncher.cs" />
     <Compile Include="Utils\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

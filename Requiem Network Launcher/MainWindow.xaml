@@ -29,8 +29,9 @@
                                     <Label Content="Password:" HorizontalAlignment="Left" Margin="67,294,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#7FFFFFFF" FontSize="22"/>
                                     <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="33" Margin="67,331,0,0" PasswordChar="*" VerticalAlignment="Top" Width="487" FontSize="22" BorderBrush="White" Background="#ffffff" KeyDown="PasswordBox_KeyDown" />
                                     <Button x:Name="StartGameButton" Content="Start Game" HorizontalAlignment="Center" Height="60" Margin="67,504,46,0" VerticalAlignment="Top" Width="487" Click="StartGameButton_Click" Background="White" BorderBrush="White"/>
-                                    <Button x:Name="UpdateGameButton" Content="Update" HorizontalAlignment="Center" Height="60" Margin="67,582,46,0" VerticalAlignment="Top" Width="487" Click="UpdateGameButton_Click" Background="White" BorderBrush="White"/>
+                                    <Button x:Name="UpdateGameButton" Content="Update Game" HorizontalAlignment="Center" Height="60" Margin="67,582,210,0" VerticalAlignment="Top" Width="323" Click="UpdateGameButton_Click" Background="White" BorderBrush="White"/>
                                     <TextBlock x:Name="WarningBox" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="67,380,0,0" VerticalAlignment="Top" Background="#00000000" FontSize="22" Width="487" Height="106"/>
+                                    <Button x:Name="UpdateLauncherButton" Content=" Update&#xD;&#xA;Launcher" HorizontalAlignment="Center" Height="60" Margin="412,582,46,0" VerticalAlignment="Top" Width="142" Background="White" BorderBrush="White" FontSize="18" Click="UpdateLauncherButton_Click"/>
 
                                 </Grid>
                             </TabItem>

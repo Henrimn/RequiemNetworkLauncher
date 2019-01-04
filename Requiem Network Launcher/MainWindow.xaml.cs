@@ -28,10 +28,8 @@ namespace Requiem_Network_Launcher
         private string _processPath;
         private string _versionPath;
         private string _updatePath;
-        private string _launcherUpdaterPath;
         private string _currentVersionLocal;
         private NotifyIcon _nIcon;
-        private string _exitSign;
 
         public MainWindow()
         {
@@ -49,22 +47,20 @@ namespace Requiem_Network_Launcher
             ProgressBar.Visibility = Visibility.Hidden;
 
         }
-        
+
         private void SetFilesPath()
         {
             // get current directory of the Launcher
             rootDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
 
             // set path for winnsi.dll and Vindictus.exe, version.txt and LauncherUpdater.exe
-            /*_dllPath = System.IO.Path.Combine(rootDirectory, "winnsi.dll");
+            _dllPath = System.IO.Path.Combine(rootDirectory, "winnsi.dll");
             _processPath = System.IO.Path.Combine(rootDirectory, "Vindictus.exe");
-            _launcherUpdaterPath = System.IO.Path.Combine(rootDirectory, "LauncherUpdater.exe");
-            _versionPath = System.IO.Path.Combine(rootDirectory, "Version.txt");*/
+            _versionPath = System.IO.Path.Combine(rootDirectory, "version.txt");
 
-            _dllPath = @"C:\Requiem\ko-KR\winnsi.dll";
+            /*_dllPath = @"C:\Requiem\ko-KR\winnsi.dll";
             _processPath = @"C:\Requiem\ko-KR\Vindictus.exe";
-            _launcherUpdaterPath = @"D:\test\LauncherUpdater.exe";
-            _versionPath = @"D:\test\version.txt";
+            _versionPath = @"D:\test\version.txt";*/
 
             if (!File.Exists(_dllPath))
             {
@@ -73,6 +69,10 @@ namespace Requiem_Network_Launcher
                 {
                     WarningBox.Text = "You are missing winnsi.dll file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
                     WarningBox.Foreground = new SolidColorBrush(Colors.Red);
+
+                    DisableAllButtons();
+                    UpdateLauncherButton.IsEnabled = true;
+                    UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
                 }));
             }
             else if (!File.Exists(_processPath))
@@ -82,15 +82,10 @@ namespace Requiem_Network_Launcher
                 {
                     WarningBox.Text = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
                     WarningBox.Foreground = new SolidColorBrush(Colors.Red);
-                }));
-            }
-            else if (!File.Exists(_launcherUpdaterPath))
-            {
-                // update small version info at bottom left corner
-                Dispatcher.Invoke((Action)(() =>
-                {
-                    WarningBox.Text = "You are missing LauncherUpdater.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
-                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
+
+                    DisableAllButtons();
+                    UpdateLauncherButton.IsEnabled = true;
+                    UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
                 }));
             }
             else if (!File.Exists(_versionPath))
@@ -100,6 +95,10 @@ namespace Requiem_Network_Launcher
                 {
                     WarningBox.Text = "You are missing version.txt file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
                     WarningBox.Foreground = new SolidColorBrush(Colors.Red);
+
+                    DisableAllButtons();
+                    UpdateLauncherButton.IsEnabled = true;
+                    UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
                 }));
             }
             else
@@ -121,11 +120,8 @@ namespace Requiem_Network_Launcher
 
             HttpClient _client = new HttpClient();
 
-            // temporary disable start game button before finishing checking game version
-            StartGameButton.IsEnabled = false;
-            StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
-            UpdateGameButton.IsEnabled = false;
-            UpdateGameButton.Foreground = new SolidColorBrush(Colors.Silver);
+            // temporary disable all button before finishing checking game version
+            DisableAllButtons();
 
             // read info from version.txt file in main game folder
             var versionTextLocal = System.IO.File.ReadAllText(versionPath);
@@ -163,9 +159,6 @@ namespace Requiem_Network_Launcher
             }
             else
             {
-                // no update = normal close button
-                _exitSign = "noupdate";
-
                 // display notice
                 Dispatcher.Invoke((Action)(() =>
                 {
@@ -178,6 +171,9 @@ namespace Requiem_Network_Launcher
                     // re-enable start game button for player
                     StartGameButton.IsEnabled = true;
                     StartGameButton.Foreground = new SolidColorBrush(Colors.Black);
+                    
+                    UpdateLauncherButton.IsEnabled = true;
+                    UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
                 }));
 
             }
@@ -193,7 +189,7 @@ namespace Requiem_Network_Launcher
                 ArtCreditText.Content = artWorkCredit;
             }));
         }
-        
+
         private void GetCurrentLocalVersion(string version)
         {
             _currentVersionLocal = version;
@@ -230,21 +226,8 @@ namespace Requiem_Network_Launcher
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            // normal exit if client did not need to update the game
-            if (_exitSign == "noupdate")
-            {
-                _nIcon.Visible = false;
-                Environment.Exit(0);
-            }
-
-            // launch LauncherUpdater.exe if client did need to update the game
-            else if (_exitSign == "update")
-            {
-                Process launcherUpdater = new Process();
-                launcherUpdater.StartInfo.FileName = _launcherUpdaterPath;
-                launcherUpdater.Start();
-                Environment.Exit(0);
-            }
+            _nIcon.Visible = false;
+            Environment.Exit(0);
             base.OnClosing(e);
         }
 
@@ -254,6 +237,21 @@ namespace Requiem_Network_Launcher
             {
                 this.WindowState = WindowState.Normal;
             }
+        }
+
+        private void DisableAllButtons()
+        {
+            Dispatcher.Invoke((Action)(() =>
+            {
+                StartGameButton.IsEnabled = false;
+                StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
+
+                UpdateGameButton.IsEnabled = false;
+                UpdateGameButton.Foreground = new SolidColorBrush(Colors.Silver);
+
+                UpdateLauncherButton.IsEnabled = false;
+                UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Silver);
+            }));
         }
     }
 }
