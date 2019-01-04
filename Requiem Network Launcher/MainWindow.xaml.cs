@@ -200,7 +200,7 @@ namespace Requiem_Network_Launcher
             _nIcon = new NotifyIcon();
             _nIcon.Icon = Properties.Resources.macha_icon;
             _nIcon.Visible = true;
-            _nIcon.DoubleClick += delegate (object sender, EventArgs e) { this.Show(); this.WindowState = WindowState.Normal; Window window = (Window)sender; window.Topmost = true; };
+            _nIcon.DoubleClick += delegate (object sender, EventArgs e) { this.Show(); this.WindowState = WindowState.Normal;};
             _nIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
             _nIcon.ContextMenuStrip.Items.Add("Exit", null, this.MenuExit_Click);
             _nIcon.Text = "Requiem Network Launcher";
