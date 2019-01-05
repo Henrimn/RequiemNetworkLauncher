@@ -53,7 +53,7 @@ namespace Requiem_Network_Launcher
                 updateDownloadLink = updateDownloadLink + updateDowndloadOld[3];
                 GetDownloadFileSize(updateDowndloadOld[5]);
             }
-            else // if player has an outdate patch
+            else // if player has an outdate patch or missing version.txt
             {
                 updateDownloadLink = updateDownloadLink + updateDowndloadNew[3];
                 GetDownloadFileSize(updateDowndloadNew[5]);

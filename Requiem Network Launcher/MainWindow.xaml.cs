@@ -62,17 +62,32 @@ namespace Requiem_Network_Launcher
             _processPath = @"C:\Requiem\ko-KR\Vindictus.exe";
             _versionPath = @"D:\test\version.txt";*/
 
-            if (!File.Exists(_dllPath))
+            if (!File.Exists(_versionPath))
             {
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    WarningBox.Text = "You are missing winnsi.dll file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
+                    WarningBox.Text = "You are missing version.txt file!\nMake sure launcher is in main game folder.\nTry update your game.\nContact staff for more help.";
+                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    
+                    StartGameButton.IsEnabled = false;
+                    StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
+
+                    GetCurrentLocalVersion("other");
+                }));
+            }
+            else if (!File.Exists(_dllPath))
+            {
+                // update small version info at bottom left corner
+                Dispatcher.Invoke((Action)(() =>
+                {
+                    WarningBox.Text = "You are missing winnsi.dll file!\nMake sure launcher is in main game folder.\nTry update your game first.\nContact staff for more help.";
                     WarningBox.Foreground = new SolidColorBrush(Colors.Red);
 
-                    DisableAllButtons();
-                    UpdateLauncherButton.IsEnabled = true;
-                    UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
+                    StartGameButton.IsEnabled = false;
+                    StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
+
+                    GetCurrentLocalVersion("other");
                 }));
             }
             else if (!File.Exists(_processPath))
@@ -80,25 +95,13 @@ namespace Requiem_Network_Launcher
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    WarningBox.Text = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
+                    WarningBox.Text = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder!\nContact staff for more help.";
                     WarningBox.Foreground = new SolidColorBrush(Colors.Red);
 
-                    DisableAllButtons();
-                    UpdateLauncherButton.IsEnabled = true;
-                    UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
-                }));
-            }
-            else if (!File.Exists(_versionPath))
-            {
-                // update small version info at bottom left corner
-                Dispatcher.Invoke((Action)(() =>
-                {
-                    WarningBox.Text = "You are missing version.txt file!\nMake sure launcher is in main game folder.\nContact staff for more help.";
-                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    StartGameButton.IsEnabled = false;
+                    StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
 
-                    DisableAllButtons();
-                    UpdateLauncherButton.IsEnabled = true;
-                    UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
+                    GetCurrentLocalVersion("other");
                 }));
             }
             else
