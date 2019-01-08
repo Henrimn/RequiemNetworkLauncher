@@ -93,7 +93,6 @@ namespace Requiem_Network_Launcher
                 // close the launcher if user has logged in successfully
                 await Task.Delay(2000);
                 this.WindowState = WindowState.Minimized;
-
                 //this.Close();
             }
 

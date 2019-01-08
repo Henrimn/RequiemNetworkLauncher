@@ -34,8 +34,8 @@ namespace Requiem_Network_Launcher
         public MainWindow()
         {
             InitializeComponent();
+            LoadUserSettings();
             this.SourceInitialized += Window_SourceInitialized;
-
             NotifyIconSetup();
 
             // perform version checking everytime launcher starts
@@ -45,9 +45,9 @@ namespace Requiem_Network_Launcher
             // hide ui 
             ProgressDetails.Visibility = Visibility.Hidden;
             ProgressBar.Visibility = Visibility.Hidden;
-
+            
         }
-
+        
         private void SetFilesPath()
         {
             // get current directory of the Launcher
@@ -121,8 +121,6 @@ namespace Requiem_Network_Launcher
 
             var versionPath = _versionPath;
 
-            HttpClient _client = new HttpClient();
-
             // temporary disable all button before finishing checking game version
             DisableAllButtons();
 
@@ -138,11 +136,14 @@ namespace Requiem_Network_Launcher
                 VersionDisplayLabel.Content = "Version: " + currentVersionLocal + " - Release Date: " + currentVersionDate;
             }));
 
+            // work with .net framework 4.5 and above
+            HttpClient _client = new HttpClient();
+
             // read info from version.txt on the server
             var versionTextServer = await _client.GetStringAsync("http://requiemnetwork.com/version.txt");
             var versionTextServerSplit = versionTextServer.Split(',');
             var currentVersionServer = versionTextServerSplit[0].Split('"')[3];
-
+            
             // check if player has updated their game yet or not
             if (currentVersionLocal != currentVersionServer)
             {
@@ -203,7 +204,7 @@ namespace Requiem_Network_Launcher
             _nIcon = new NotifyIcon();
             _nIcon.Icon = Properties.Resources.macha_icon;
             _nIcon.Visible = true;
-            _nIcon.DoubleClick += delegate (object sender, EventArgs e) { this.Show(); this.WindowState = WindowState.Normal;};
+            _nIcon.DoubleClick += delegate (object sender, EventArgs e) { this.Show(); this.WindowState = WindowState.Normal; };
             _nIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
             _nIcon.ContextMenuStrip.Items.Add("Exit", null, this.MenuExit_Click);
             _nIcon.Text = "Requiem Network Launcher";
@@ -220,7 +221,7 @@ namespace Requiem_Network_Launcher
             if (WindowState == WindowState.Minimized)
             {
                 _nIcon.BalloonTipText = "Launcher has been minimized to system tray";
-                _nIcon.BalloonTipTitle = "Requiem Network Launcher";
+                _nIcon.BalloonTipTitle = "Requiem Network";
                 _nIcon.ShowBalloonTip(1000);
                 this.Hide();
             }
@@ -230,16 +231,20 @@ namespace Requiem_Network_Launcher
         protected override void OnClosing(CancelEventArgs e)
         {
             _nIcon.Visible = false;
+            if (this.WindowState == WindowState.Normal)
+            {
+                Properties.Settings.Default.Height = this.Height;
+                Properties.Settings.Default.Width = this.Width;
+                
+            }
+            else
+            {
+                Properties.Settings.Default.Height = this.RestoreBounds.Height;
+                Properties.Settings.Default.Width = this.RestoreBounds.Width;
+            }
+            Properties.Settings.Default.Save();
             Environment.Exit(0);
             base.OnClosing(e);
-        }
-
-        private void Window_StateChanged(object sender, EventArgs e)
-        {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                this.WindowState = WindowState.Normal;
-            }
         }
 
         private void DisableAllButtons()
@@ -255,6 +260,12 @@ namespace Requiem_Network_Launcher
                 UpdateLauncherButton.IsEnabled = false;
                 UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Silver);
             }));
+        }
+        
+        private void LoadUserSettings()
+        {
+            this.Height = Properties.Settings.Default.Height;
+            this.Width = Properties.Settings.Default.Width;
         }
     }
 }
