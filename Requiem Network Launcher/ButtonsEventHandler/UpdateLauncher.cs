@@ -44,26 +44,53 @@ namespace Requiem_Network_Launcher
             if (!File.Exists(_launcherUpdaterPath))
             {
                 // download the batch file if it was not in the folder yet
-                using (WebClient webClient = new WebClient())
+                try
                 {
-                    var uri = new Uri("http://requiemnetwork.com/downloads/update.bat");
-                    Console.WriteLine(uri);
-                    webClient.DownloadProgressChanged += NewWebClient_DownloadProgressChanged;
-                    webClient.DownloadFileCompleted += NewWebClient_DownloadFileCompleted;
-                    await webClient.DownloadFileTaskAsync(uri, _launcherUpdaterPath);
+                    using (WebClient webClient = new WebClient())
+                    {
+                        var uri = new Uri("http://requiemnetwork.com/downloads/update.bat");
+                        Console.WriteLine(uri);
+                        webClient.DownloadProgressChanged += NewWebClient_DownloadProgressChanged;
+                        webClient.DownloadFileCompleted += NewWebClient_DownloadFileCompleted;
+                        await webClient.DownloadFileTaskAsync(uri, _launcherUpdaterPath);
+                    }
                 }
+                catch (Exception e1)
+                {
+                    System.Windows.MessageBox.Show(e1.Message, "Connection error");
+
+                    Dispatcher.Invoke((Action)(() =>
+                    {
+                        WarningBox.Text = e1.Message;
+                        WarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    }));
+                }
+                
             }
             else
             {
                 // download new launcher
                 _newLauncherPath = _versionPath = System.IO.Path.Combine(rootDirectory, "update.exe");
-                using (WebClient webClient = new WebClient())
+                try
                 {
-                    var uri = new Uri("http://requiemnetwork.com/downloads/update.exe");
-                    Console.WriteLine(uri);
-                    webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged1; 
-                    webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted1;
-                    await webClient.DownloadFileTaskAsync(uri, _newLauncherPath);
+                    using (WebClient webClient = new WebClient())
+                    {
+                        var uri = new Uri("http://requiemnetwork.com/downloads/update.exe");
+                        Console.WriteLine(uri);
+                        webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged1;
+                        webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted1;
+                        await webClient.DownloadFileTaskAsync(uri, _newLauncherPath);
+                    }
+                }
+                catch (Exception e1)
+                {
+                    System.Windows.MessageBox.Show(e1.Message, "Connection error");
+
+                    Dispatcher.Invoke((Action)(() =>
+                    {
+                        WarningBox.Text = e1.Message;
+                        WarningBox.Foreground = new SolidColorBrush(Colors.Red);
+                    }));
                 }
             }
         }

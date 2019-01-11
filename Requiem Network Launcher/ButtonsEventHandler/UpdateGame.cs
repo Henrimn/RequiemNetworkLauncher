@@ -34,6 +34,9 @@ namespace Requiem_Network_Launcher
 
             HttpClient _client = new HttpClient();
 
+            // set default download link
+            var updateDownloadLink = "https://drive.google.com/uc?export=download&id=";
+
             // get download links from server
             var updateDownload = await _client.GetStringAsync("http://requiemnetwork.com/update.txt");
             var updateDownloadSplit = updateDownload.Split(',');
@@ -43,10 +46,7 @@ namespace Requiem_Network_Launcher
 
             // download information for people who has not updated their game for a while
             var updateDowndloadNew = updateDownloadSplit[1].Split('"');
-
-            // set default download link
-            var updateDownloadLink = "https://drive.google.com/uc?export=download&id=";
-
+            
             // get download link based on their game's current version
             if (_currentVersionLocal == updateDowndloadOld[1]) // if player has the latest patch
             {
@@ -58,52 +58,57 @@ namespace Requiem_Network_Launcher
                 updateDownloadLink = updateDownloadLink + updateDowndloadNew[3];
                 GetDownloadFileSize(updateDowndloadNew[5]);
             }
-
-
-
+            
             // create temporary zip file from download
             _updatePath = System.IO.Path.Combine(rootDirectory, "UpdateTemporary.zip");
             //_updatePath = @"D:\test\UpdateTemp.zip";
 
             // download update (zip) 
-            using (CookieAwareWebClient webClient = new CookieAwareWebClient())
+            try
             {
-                // sometimes google drive returns an NID cookie instead of a download warning cookie at first attempt
-                // it will works in the second attempt
-                for (int i = 0; i < 2; i++)
+                using (CookieAwareWebClient webClient = new CookieAwareWebClient())
                 {
-                    // download page content
-                    string DownloadString = await webClient.DownloadStringTaskAsync(updateDownloadLink);
-
-                    // get confirm code from page content
-                    Match match = Regex.Match(DownloadString, @"confirm=([0-9A-Za-z]+)");
-
-                    if (_continueSign == "continue")
+                    // sometimes google drive returns an NID cookie instead of a download warning cookie at first attempt
+                    // it will works in the second attempt
+                    for (int i = 0; i < 2; i++)
                     {
-                        if (match.Value == "") // in case it is a direct google drive download link
+                        // download page content
+                        string DownloadString = await webClient.DownloadStringTaskAsync(updateDownloadLink);
+
+                        // get confirm code from page content
+                        Match match = Regex.Match(DownloadString, @"confirm=([0-9A-Za-z]+)");
+
+                        if (_continueSign == "continue")
                         {
-                            // download the update
-                            var uri = new Uri(updateDownloadLink);
-                            webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
-                            webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
-                            await webClient.DownloadFileTaskAsync(uri, _updatePath);
+                            if (match.Value == "") // in case it is a direct google drive download link
+                            {
+                                // download the update
+                                var uri = new Uri(updateDownloadLink);
+                                webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
+                                webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
+                                await webClient.DownloadFileTaskAsync(uri, _updatePath);
+                            }
+                            else // in case it is not a direct google drive download link
+                            {
+                                // construct new download link with confirm code
+                                //string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + "15wrcgMB8AyRk30x5p7DoXvdZSrCrkL70";
+                                string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + updateDowndloadNew[3];
+                                var uri = new Uri(updateDownloadLinkNew);
+                                webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
+                                webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
+                                await webClient.DownloadFileTaskAsync(uri, _updatePath);
+                            }
                         }
-                        else // in case it is not a direct google drive download link
+                        else if (_continueSign == "stop")
                         {
-                            // construct new download link with confirm code
-                            //string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + "15wrcgMB8AyRk30x5p7DoXvdZSrCrkL70";
-                            string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + updateDowndloadNew[3];
-                            var uri = new Uri(updateDownloadLinkNew);
-                            webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
-                            webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
-                            await webClient.DownloadFileTaskAsync(uri, _updatePath);
+                            break;
                         }
-                    }
-                    else if (_continueSign == "stop")
-                    {
-                        break;
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.Message, "Error");
             }
         }
 

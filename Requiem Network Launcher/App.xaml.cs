@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
+using System.Windows.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -24,12 +24,13 @@ namespace Requiem_Network_Launcher
     public partial class App : Application, ISingleInstanceApp
     {
         private const string Unique = "My_Unique_Application_String";
-
-    [STAThread]
+        
+        [STAThread]
         public static void Main()
         {
             if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
             {
+                
                 var application = new App();
 
                 application.InitializeComponent();
@@ -55,5 +56,6 @@ namespace Requiem_Network_Launcher
         }
 
         #endregion
+
     }
 }
