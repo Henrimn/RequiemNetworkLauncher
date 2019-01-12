@@ -217,7 +217,7 @@ namespace Requiem_Network_Launcher
                         WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                     }));
                 }
-                else if (e is NotSupportedException)
+                else
                 {
                     System.Windows.MessageBox.Show(e.Message, "Error");
 
