@@ -38,9 +38,25 @@ namespace Requiem_Network_Launcher
             // load user settings
             LoadUserSettings();
             this.SourceInitialized += Window_SourceInitialized;
-
+            
             // setup system tray icon for launcher
             NotifyIconSetup();
+
+            // check dotnet framework version
+            Get45PlusFromRegistry();
+
+            if (_dotnetKey != "Henri")
+            {
+                System.Windows.MessageBox.Show("You are using .NET Framework version: " + _dotnetKey + ".\nPlease update to 4.6.1 or later to use the Launcher!", 
+                                                                                                ".NET Framework Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
+            }
+            else if (_dotnetKey == "")
+            {
+                System.Windows.MessageBox.Show("You are using a very outdated .NET Framework version!\nPlease install version 4.6.1 or later to use the Launcher!", 
+                                                                                                ".NET Framework Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
+            }
 
             // setup files path and perform version checking everytime launcher starts
             SetFilesPath();

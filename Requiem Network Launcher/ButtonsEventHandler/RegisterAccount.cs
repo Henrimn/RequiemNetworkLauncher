@@ -71,9 +71,7 @@ namespace Requiem_Network_Launcher
                     }));
                 }
             }
-
         }
-
     }
 }
 
