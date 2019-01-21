@@ -24,7 +24,7 @@ namespace Requiem_Network_Launcher
     public partial class App : Application, ISingleInstanceApp
     {
         private const string Unique = "Requiem_Network_Launcher_UwU";
-
+        
         [STAThread]
         public static void Main()
         {

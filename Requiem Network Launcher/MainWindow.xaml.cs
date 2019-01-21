@@ -29,6 +29,7 @@ namespace Requiem_Network_Launcher
         private string _versionPath;
         private string _updatePath;
         private string _currentVersionLocal;
+        private string _versionTxtCheck = "yes";
         private NotifyIcon _nIcon;
 
         public MainWindow()
@@ -87,20 +88,12 @@ namespace Requiem_Network_Launcher
 
             if (!File.Exists(_versionPath))
             {
-                // update small version info at bottom left corner
-                Dispatcher.Invoke((Action)(() =>
-                {
-                    WarningBox.Text = "You are missing version.txt file!\nMake sure launcher is in main game folder!\nTry update your game first.\nContact staff for more help.";
-                    WarningBox.Foreground = new SolidColorBrush(Colors.Red);
-
-                    StartGameButton.IsEnabled = false;
-                    StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
-
-                    GetCurrentLocalVersion("other");
-                }));
+                _versionTxtCheck = "not found";
+                Update();
             }
             else if (!File.Exists(_dllPath))
             {
+                _versionTxtCheck = "not found";
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
@@ -109,22 +102,20 @@ namespace Requiem_Network_Launcher
 
                     StartGameButton.IsEnabled = false;
                     StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
-
-                    GetCurrentLocalVersion("other");
+                    
                 }));
             }
             else if (!File.Exists(_processPath))
             {
+                _versionTxtCheck = "not found";
                 // update small version info at bottom left corner
                 Dispatcher.Invoke((Action)(() =>
                 {
-                    WarningBox.Text = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder!\nContact staff for more help.";
+                    WarningBox.Text = "You are missing Vindictus.exe file!\nMake sure launcher is in main game folder!\nTry update your game first.\nContact staff for more help.";
                     WarningBox.Foreground = new SolidColorBrush(Colors.Red);
 
                     StartGameButton.IsEnabled = false;
                     StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
-
-                    GetCurrentLocalVersion("other");
                 }));
             }
             else if (!File.Exists(ngclientFilePath))
@@ -137,8 +128,6 @@ namespace Requiem_Network_Launcher
 
                     StartGameButton.IsEnabled = false;
                     StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
-
-                    GetCurrentLocalVersion("other");
                 }));
             }
             else
@@ -155,14 +144,13 @@ namespace Requiem_Network_Launcher
                 WarningBox.Text = "Checking game version...";
                 WarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
             }));
-
-            var versionPath = _versionPath;
+            
 
             // temporary disable all button before finishing checking game version
             DisableAllButtons();
 
             // read info from version.txt file in main game folder
-            var versionTextLocal = System.IO.File.ReadAllText(versionPath);
+            var versionTextLocal = System.IO.File.ReadAllText(_versionPath);
             var versionTextLocalSplit = versionTextLocal.Split(',');
             var currentVersionLocal = versionTextLocalSplit[0].Split('"')[3];
             var currentVersionDate = versionTextLocalSplit[1].Split('"')[3];
@@ -172,33 +160,25 @@ namespace Requiem_Network_Launcher
             {
                 VersionDisplayLabel.Content = "Version: " + currentVersionLocal + " - Release Date: " + currentVersionDate;
             }));
-
+            
             // work with .net framework 4.5 and above
             HttpClient _client = new HttpClient();
-
+            
             try
             {
                 // read info from version.txt on the server
-                var versionTextServer = await _client.GetStringAsync("http://requiemnetwork.com/version.txt");
+                var versionTextServer = await _client.GetStringAsync("http://requiemnetwork.com/launcher/version.txt");
                 var versionTextServerSplit = versionTextServer.Split(',');
                 var currentVersionServer = versionTextServerSplit[0].Split('"')[3];
+                Console.WriteLine("current version on server:" + currentVersionServer);
 
                 // check if player has updated their game yet or not
                 if (currentVersionLocal != currentVersionServer)
                 {
-                    // display warning
-                    Dispatcher.Invoke((Action)(() =>
-                    {
-                        WarningBox.Text = "Your game is not up to date yet.\nPlease update your game!";
-                        WarningBox.Foreground = new SolidColorBrush(Colors.Red);
-
-                        // enable update button only -> force player to update the game
-                        UpdateGameButton.IsEnabled = true;
-                        UpdateGameButton.Foreground = new SolidColorBrush(Colors.Black);
-                    }));
-
                     // store variable so that it can be accessed outside of async method
                     GetCurrentLocalVersion(currentVersionLocal);
+                    _continueSign = "continue";
+                    Update();
                 }
                 else
                 {
@@ -208,7 +188,7 @@ namespace Requiem_Network_Launcher
                         // set focus on username box once the launcher starts
                         UsernameBox.Focus();
 
-                        WarningBox.Text = "Your game is up to date!";
+                        WarningBox.Text = "Your game is up-to-date!";
                         WarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
 
                         // re-enable start game button for player
@@ -217,6 +197,9 @@ namespace Requiem_Network_Launcher
 
                         UpdateLauncherButton.IsEnabled = true;
                         UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
+
+                        CheckForUpdatesButton.IsEnabled = true;
+                        CheckForUpdatesButton.Foreground = new SolidColorBrush(Colors.Black);
                     }));
 
                 }
@@ -229,7 +212,7 @@ namespace Requiem_Network_Launcher
 
                     Dispatcher.Invoke((Action)(() =>
                     {
-                        WarningBox.Text = "Cannot check game version!\nServer is currently down or your internet is down!\nContact staff for more help.";
+                        WarningBox.Text = "Cannot connect to server!\nPlease check your network connection first.\nnContact staff for more help.";
                         WarningBox.Foreground = new SolidColorBrush(Colors.Red);
                     }));
                 }
@@ -253,7 +236,7 @@ namespace Requiem_Network_Launcher
 
             try
             {
-                var artWorkCredit = await _client.GetStringAsync("http://requiemnetwork.com/artwork.txt");
+                var artWorkCredit = await _client.GetStringAsync("http://requiemnetwork.com/launcher/artwork.txt");
                 Dispatcher.Invoke((Action)(() =>
                 {
                     ArtCreditText.Content = artWorkCredit;
@@ -326,8 +309,8 @@ namespace Requiem_Network_Launcher
                 StartGameButton.IsEnabled = false;
                 StartGameButton.Foreground = new SolidColorBrush(Colors.Silver);
 
-                UpdateGameButton.IsEnabled = false;
-                UpdateGameButton.Foreground = new SolidColorBrush(Colors.Silver);
+                CheckForUpdatesButton.IsEnabled = false;
+                CheckForUpdatesButton.Foreground = new SolidColorBrush(Colors.Silver);
 
                 UpdateLauncherButton.IsEnabled = false;
                 UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Silver);

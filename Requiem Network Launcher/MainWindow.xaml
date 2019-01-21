@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Requiem_Network_Launcher"
         mc:Ignorable="d"
-        Title="Requiem Network" MinHeight="469" MinWidth="750" Height="900" Width="1440" WindowStartupLocation="CenterScreen">
+        Title="Requiem Network" MinHeight="469" MinWidth="750" MaxHeight="900" MaxWidth="1440" Height="900" Width="1440" WindowStartupLocation="CenterScreen">
     <Window.Background>
-        <ImageBrush ImageSource="http://requiemnetwork.com/background.jpg" Stretch="UniformToFill"/>
+        <ImageBrush ImageSource="http://requiemnetwork.com/launcher/background.jpg" Stretch="UniformToFill"/>
 
     </Window.Background>
     <Viewbox Stretch="Fill">
@@ -32,10 +32,10 @@
                                     <TextBox x:Name="UsernameBox" HorizontalAlignment="Left" Height="33" Margin="67,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="487" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SpellCheck.IsEnabled="False" BorderBrush="White" Background="#ffffff" KeyDown="UsernameBox_KeyDown" />
                                     <Label Content="Password:" HorizontalAlignment="Left" Margin="67,294,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="#7FFFFFFF" FontSize="22"/>
                                     <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="33" Margin="67,331,0,0" PasswordChar="*" VerticalAlignment="Top" Width="487" FontSize="22" BorderBrush="White" Background="#ffffff" KeyDown="PasswordBox_KeyDown" />
-                                    <Button x:Name="StartGameButton" Content="Start Game" HorizontalAlignment="Center" Height="60" Margin="67,504,46,0" VerticalAlignment="Top" Width="487" Click="StartGameButton_Click" Background="White" BorderBrush="White"/>
-                                    <Button x:Name="UpdateGameButton" Content="Update Game" HorizontalAlignment="Center" Height="60" Margin="67,582,210,0" VerticalAlignment="Top" Width="323" Click="UpdateGameButton_Click" Background="White" BorderBrush="White"/>
-                                    <TextBlock x:Name="WarningBox" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="67,380,0,0" VerticalAlignment="Top" Background="#00000000" FontSize="22" Width="487" Height="106"/>
-                                    <Button x:Name="UpdateLauncherButton" Content=" Update&#xD;&#xA;Launcher" HorizontalAlignment="Center" Height="60" Margin="412,582,46,0" VerticalAlignment="Top" Width="142" Background="White" BorderBrush="White" FontSize="18" Click="UpdateLauncherButton_Click"/>
+                                    <Button x:Name="StartGameButton" Content="Start Game" HorizontalAlignment="Center" Height="60" Margin="67,516,46,0" VerticalAlignment="Top" Width="487" Click="StartGameButton_Click" Background="White" BorderBrush="White"/>
+                                    <Button x:Name="CheckForUpdatesButton" Content="Check For Updates" HorizontalAlignment="Center" Height="58" Margin="67,592,236,0" VerticalAlignment="Top" Width="297" Click="CheckForUpdatesButton_Click" Background="White" BorderBrush="White"/>
+                                    <TextBlock x:Name="WarningBox" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="67,380,0,0" VerticalAlignment="Top" Background="#00000000" FontSize="22" Width="487" Height="118"/>
+                                    <Button x:Name="UpdateLauncherButton" Content=" Update&#xD;&#xA;Launcher" HorizontalAlignment="Center" Height="58" Margin="383,592,46,0" VerticalAlignment="Top" Width="171" Background="White" BorderBrush="White" FontSize="18" Click="UpdateLauncherButton_Click"/>
 
                                 </Grid>
                             </TabItem>
@@ -57,12 +57,12 @@
                 </TabItem>
                 <TabItem Header="PATCHNOTES" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF747474" Margin="153,-5,-299,0" ClipToBounds="True" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                     <Grid>
-                        <WebBrowser HorizontalAlignment="Center" Height="749" VerticalAlignment="Center" Width="600" Source="http://requiemnetwork.com/patchnotes.html" ClipToBounds="True" Opacity="0.5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                        <WebBrowser HorizontalAlignment="Center" Height="749" VerticalAlignment="Center" Width="600" Source="http://requiemnetwork.com/launcher/patchnotes.html" ClipToBounds="True" Opacity="0.5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                     </Grid>
                 </TabItem>
             </TabControl>
             <Label x:Name="VersionDisplayLabel" Content="" HorizontalAlignment="Left" Margin="0,851,0,-14" VerticalAlignment="Top" Height="34" Foreground="White" FontFamily="Century Gothic" Width="746" FontSize="11" Grid.ColumnSpan="2"/>
-            <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Left" Height="20" Margin="60,831,0,0" VerticalAlignment="Top" Width="1334" Grid.ColumnSpan="2"/>
+            <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Left" Height="20" Margin="60,831,60,0" VerticalAlignment="Top" Width="1334" Grid.ColumnSpan="2"/>
             <Label x:Name="ArtCreditText" Content="" HorizontalAlignment="Left" Margin="629.799,851,0,-14" VerticalAlignment="Top" Width="660" Height="34" FontSize="11" FontFamily="Century Gothic" HorizontalContentAlignment="Right" Grid.Column="1"/>
             <Label x:Name="ProgressDetails" Content="" HorizontalAlignment="Left" Margin="40,826,0,10" Width="1334" FontFamily="Century Gothic" FontSize="15" HorizontalContentAlignment="Center" Grid.ColumnSpan="2"/>
         </Grid>

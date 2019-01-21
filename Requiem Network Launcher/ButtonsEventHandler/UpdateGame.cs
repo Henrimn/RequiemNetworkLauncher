@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Net;
 using Ionic.Zip;
 using System.Text.RegularExpressions;
-
+using System.Diagnostics;
 
 namespace Requiem_Network_Launcher
 {
@@ -15,10 +15,11 @@ namespace Requiem_Network_Launcher
     {
         private double _updateFileSize;
         private string _continueSign = "continue";
+        private string _updateDownloadID;
 
-        private void UpdateGameButton_Click(object sender, RoutedEventArgs e)
+        private void CheckForUpdatesButton_Click(object sender, RoutedEventArgs e)
         {
-            Update();
+            CheckGameVersion();
         }
 
         private async void Update()
@@ -26,82 +27,100 @@ namespace Requiem_Network_Launcher
             // update ui for downloading
             Dispatcher.Invoke((Action)(() =>
             {
-                WarningBox.Text = "Gathering information...";
+                WarningBox.Text = "Preparing update...";
                 WarningBox.Foreground = new SolidColorBrush(Colors.LawnGreen);
-
                 DisableAllButtons();
+
             }));
 
-            HttpClient _client = new HttpClient();
-
-            // set default download link
-            var updateDownloadLink = "https://drive.google.com/uc?export=download&id=";
-
-            // get download links from server
-            var updateDownload = await _client.GetStringAsync("http://requiemnetwork.com/update.txt");
-            var updateDownloadSplit = updateDownload.Split(',');
-
-            // download information for people who update their game regularly
-            var updateDowndloadOld = updateDownloadSplit[0].Split('"');
-
-            // download information for people who has not updated their game for a while
-            var updateDowndloadNew = updateDownloadSplit[1].Split('"');
-            
-            // get download link based on their game's current version
-            if (_currentVersionLocal == updateDowndloadOld[1]) // if player has the latest patch
+            if (_versionTxtCheck == "not found")
             {
-                updateDownloadLink = updateDownloadLink + updateDowndloadOld[3];
-                GetDownloadFileSize(updateDowndloadOld[5]);
+                HttpClient _client = new HttpClient();
+
+                // get download links from server
+                var updateDownload = await _client.GetStringAsync("http://requiemnetwork.com/launcher/update_02.txt");
+                var updateDownloadSplit = updateDownload.Split(',');
+
+                // download information for people who update their game regularly
+                var updateDowndloadLink = updateDownloadSplit[0].Split('"');
+
+                _updateDownloadID = updateDowndloadLink[3];
+                GetDownloadFileSize(updateDowndloadLink[5]);
             }
-            else // if player has an outdate patch or missing version.txt
+            else if (_versionTxtCheck == "yes")
             {
-                updateDownloadLink = updateDownloadLink + updateDowndloadNew[3];
-                GetDownloadFileSize(updateDowndloadNew[5]);
+
+                HttpClient _client = new HttpClient();
+
+                // get download links from server
+                var updateDownload = await _client.GetStringAsync("http://requiemnetwork.com/launcher/update_01.txt");
+                var updateDownloadSplit = updateDownload.Split(',');
+
+                // download information for people who update their game regularly
+                var updateDowndloadOld = updateDownloadSplit[0].Split('"');
+
+                // download information for people who has not updated their game for a while
+                var updateDowndloadNew = updateDownloadSplit[1].Split('"');
+
+                // get download link based on their game's current version
+                if (_currentVersionLocal == updateDowndloadOld[1]) // if player has the latest patch
+                {
+                    _updateDownloadID = updateDowndloadOld[3];
+                    GetDownloadFileSize(updateDowndloadOld[5]);
+                }
+                else // if player has an outdate patch 
+                {
+                    _updateDownloadID = updateDowndloadNew[3];
+                    GetDownloadFileSize(updateDowndloadNew[5]);
+                }
             }
-            
+
             // create temporary zip file from download
             _updatePath = System.IO.Path.Combine(rootDirectory, "UpdateTemporary.zip");
             //_updatePath = @"D:\test\UpdateTemp.zip";
+
 
             // download update (zip) 
             try
             {
                 using (CookieAwareWebClient webClient = new CookieAwareWebClient())
                 {
-                    // sometimes google drive returns an NID cookie instead of a download warning cookie at first attempt
-                    // it will works in the second attempt
-                    for (int i = 0; i < 2; i++)
+                    if (_updateFileSize <= 100000000) // if file is < 100 MB -> no virus scan page -> can download directly
                     {
-                        // download page content
-                        string DownloadString = await webClient.DownloadStringTaskAsync(updateDownloadLink);
-
-                        // get confirm code from page content
-                        Match match = Regex.Match(DownloadString, @"confirm=([0-9A-Za-z]+)");
-
-                        if (_continueSign == "continue")
+                        // download the update
+                        var uri = new Uri("https://drive.google.com/uc?export=download&id=" + _updateDownloadID);
+                        webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(WebClient_DownloadProgressChanged);
+                        webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(WebClient_DownloadFileCompleted);
+                        await webClient.DownloadFileTaskAsync(uri, _updatePath);
+                    }
+                    else // more than 100 MB -> have to bypass virus scanning page
+                    {
+                        // sometimes google drive returns an NID cookie instead of a download warning cookie at first attempt
+                        // it will works in the second attempt
+                        for (int i = 0; i < 2; i++)
                         {
-                            if (match.Value == "") // in case it is a direct google drive download link
+                            // download page content
+                            string DownloadString = await webClient.DownloadStringTaskAsync("https://drive.google.com/uc?export=download&id=" + _updateDownloadID);
+                            Console.WriteLine("downloading page contents...");
+
+                            // get confirm code from page content
+                            Match match = Regex.Match(DownloadString, @"confirm=([0-9A-Za-z]+)");
+
+                            if (_continueSign == "stop")
                             {
-                                // download the update
-                                var uri = new Uri(updateDownloadLink);
-                                webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
-                                webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
-                                await webClient.DownloadFileTaskAsync(uri, _updatePath);
+                                break;
+                                
                             }
-                            else // in case it is not a direct google drive download link
+                            else
                             {
                                 // construct new download link with confirm code
-                                //string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + "15wrcgMB8AyRk30x5p7DoXvdZSrCrkL70";
-                                string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + updateDowndloadNew[3];
+                                string updateDownloadLinkNew = "https://drive.google.com/uc?export=download&" + match.Value + "&id=" + _updateDownloadID;
                                 var uri = new Uri(updateDownloadLinkNew);
-                                webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
-                                webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
+                                webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(WebClient_DownloadProgressChanged);
+                                webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(WebClient_DownloadFileCompleted);
                                 await webClient.DownloadFileTaskAsync(uri, _updatePath);
+                                
                             }
-                        }
-                        else if (_continueSign == "stop")
-                        {
-                            break;
                         }
                     }
                 }
@@ -146,35 +165,19 @@ namespace Requiem_Network_Launcher
                     // delete the temporary zip file after finish extracting
                     File.Delete(_updatePath);
 
-
-                    // read info from version.txt file in main game folder
-                    var versionTextLocal = System.IO.File.ReadAllText(_versionPath);
-                    var versionTextLocalSplit = versionTextLocal.Split(',');
-                    var currentVersionLocal = versionTextLocalSplit[0].Split('"')[3];
-                    var currentVersionDate = versionTextLocalSplit[1].Split('"')[3];
-
                     Dispatcher.Invoke((Action)(() =>
                     {
-                        // update version display
-                        VersionDisplayLabel.Content = "Version: " + currentVersionLocal + " - Release Date: " + currentVersionDate;
-
-                        // hide progress bar and detail
-                        ProgressBar.Visibility = Visibility.Hidden;
-                        ProgressDetails.Visibility = Visibility.Hidden;
-
                         // display updating status notice
-                        WarningBox.Text = "Updating finished!\nYou can play the game now.";
-                        StartGameButton.IsEnabled = true;
-                        StartGameButton.Foreground = new SolidColorBrush(Colors.Black);
-
-                        // re-enable update launcher button after updating
-                        UpdateLauncherButton.IsEnabled = true;
-                        UpdateLauncherButton.Foreground = new SolidColorBrush(Colors.Black);
+                        ProgressDetails.Visibility = Visibility.Hidden;
+                        ProgressBar.Visibility = Visibility.Hidden;
                     }));
+
+                    _versionTxtCheck = "yes";
+
+                    CheckGameVersion();
 
                 }).Start();
             }
-
         }
 
         private void Zip_ExtractProgress(object sender, ExtractProgressEventArgs e)
@@ -188,7 +191,6 @@ namespace Requiem_Network_Launcher
                     ProgressDetails.Content = "Extracting: " + e.CurrentEntry.FileName;
                 }));
             }
-
         }
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
